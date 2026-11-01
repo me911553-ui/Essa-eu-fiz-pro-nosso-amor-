@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para o Meu Higor 🤍 | Marya & Higor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontes Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti para comemorações de jogos -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #060d19;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .font-serif-romantic {
+            font-family: 'Playfair Display', serif;
+        }
+        .font-handwriting {
+            font-family: 'Dancing Script', cursive;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #060d19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e3a8a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+        .stars-bg {
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #93c5fd, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #60a5fa, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #93c5fd, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(147, 197, 253, 0.18);
+        }
+        .glass-card-hover:hover {
+            border-color: rgba(147, 197, 253, 0.45);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.25);
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        .animate-float {
+            animation: floatSlow 5s ease-in-out infinite;
+        }
+        .polaroid {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .polaroid:hover {
+            transform: scale(1.05) rotate(0deg) translateY(-8px) !important;
+            z-index: 20;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(59, 130, 246, 0.3);
+        }
+        /* Jogo da Memória Styles */
+        .memory-card {
+            perspective: 1000px;
+        }
+        .memory-card-inner {
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+        .memory-card.flipped .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+        .memory-card-front, .memory-card-back {
+            backface-visibility: hidden;
+        }
+        .memory-card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="stars-bg min-h-screen selection:bg-blue-500 selection:text-white">
+
+    <!-- Player de Áudio Flutuante ("Lisboa") -->
+    <div class="fixed bottom-4 right-4 z-40">
+        <div class="glass-card p-3 rounded-full flex items-center gap-3 shadow-2xl border border-blue-400/30">
+            <div class="w-10 h-10 rounded-full bg-blue-600/30 flex items-center justify-center text-blue-300 animate-spin" style="animation-duration: 8s;">
+                <i data-lucide="disc" class="w-6 h-6"></i>
+            </div>
+            <div class="pr-2 hidden sm:block">
+                <p class="text-xs text-blue-300 font-medium">Nossa Música</p>
+                <p class="text-sm font-semibold text-white">Lisboa 🎵</p>
+            </div>
+            <a href="https://www.youtube.com/results?search_query=Lisboa+musica+romantica" target="_blank" rel="noopener noreferrer" 
+               class="bg-red-600 hover:bg-red-700 text-white p-2.5 rounded-full transition flex items-center justify-center shadow-lg hover:scale-105" title="Ouvir no YouTube">
+                <i data-lucide="youtube" class="w-5 h-5"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Navegação -->
+    <nav class="sticky top-0 z-30 glass-card border-b border-blue-900/50 px-4 py-3">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <a href="#" class="font-handwriting text-2xl text-blue-200 hover:text-white transition">Marya & Higor 🤍</a>
+            <div class="hidden md:flex gap-6 text-sm font-medium text-blue-200">
+                <a href="#carta" class="hover:text-white transition">Carta Principal</a>
+                <a href="#abra-quando" class="hover:text-white transition">Abra Quando...</a>
+                <a href="#jogos" class="hover:text-white transition">Jogos do Casal 🎮</a>
+                <a href="#fotos" class="hover:text-white transition">Nossa Galeria</a>
+            </div>
+            <button onclick="toggleMobileMenu()" class="md:hidden text-blue-200 hover:text-white">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden pt-3 pb-2 border-t border-blue-800/40 mt-2 flex flex-col gap-2 text-center text-sm text-blue-200">
+            <a href="#carta" onclick="toggleMobileMenu()" class="py-1">Carta Principal</a>
+            <a href="#abra-quando" onclick="toggleMobileMenu()" class="py-1">Abra Quando...</a>
+            <a href="#jogos" onclick="toggleMobileMenu()" class="py-1">Jogos do Casal 🎮</a>
+            <a href="#fotos" onclick="toggleMobileMenu()" class="py-1">Nossa Galeria</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+        <div class="absolute w-96 h-96 bg-blue-600/20 rounded-full filter blur-[100px] pointer-events-none"></div>
+
+        <div class="z-10 max-w-3xl animate-float">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-blue-900/40 text-blue-300 text-xs sm:text-sm tracking-widest uppercase border border-blue-700/40 mb-4 shadow-sm">
+                De Marya para o seu Higor
+            </span>
+            <h1 class="font-serif-romantic text-4xl sm:text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-blue-200 to-indigo-300 mb-6 drop-shadow-md">
+                Para o Meu Higor 🤍
+            </h1>
+            <p class="text-blue-200/90 text-lg sm:text-xl font-light leading-relaxed max-w-2xl mx-auto mb-8">
+                Um cantinho especial feito com todo o meu amor. Para te lembrar o quanto você é essencial, amado e o meu nescauzinho favorito.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#jogos" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium px-7 py-3 rounded-full shadow-lg hover:shadow-blue-500/25 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                    <i data-lucide="gamepad-2" class="w-5 h-5"></i> Jogar Nossos Jogos
+                </a>
+                <a href="#carta" class="glass-card hover:bg-blue-900/40 text-blue-200 font-medium px-7 py-3 rounded-full transition flex items-center gap-2">
+                    <i data-lucide="heart" class="w-4 h-4 fill-current"></i> Ler Carta Especial
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- SEÇÃO MÚSICA LISBOA -->
+    <section id="musica" class="py-12 px-4 max-w-4xl mx-auto">
+        <div class="glass-card rounded-3xl p-6 sm:p-10 border border-blue-500/20 shadow-2xl relative overflow-hidden">
+            <div class="flex flex-col sm:flex-row items-center gap-8">
+                <div class="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl bg-gradient-to-tr from-blue-950 via-indigo-900 to-blue-800 p-1 shadow-xl flex items-center justify-center border border-blue-400/30">
+                    <div class="w-full h-full rounded-xl bg-slate-950/80 flex flex-col items-center justify-center text-center p-4">
+                        <i data-lucide="music-4" class="w-12 h-12 text-blue-400 mb-2 animate-pulse"></i>
+                        <span class="font-serif-romantic text-lg font-bold text-white">Lisboa</span>
+                        <span class="text-xs text-blue-300">Trilha do Nosso Amor</span>
+                    </div>
+                </div>
+                <div class="flex-1 text-center sm:text-left">
+                    <span class="text-xs font-semibold tracking-wider text-blue-400 uppercase">Nossa Canção</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold font-serif-romantic text-white mt-1 mb-3">"Lisboa" 🎵</h2>
+                    <p class="text-blue-200/80 text-sm leading-relaxed mb-6">
+                        Cada nota dessa música me traz você no pensamento. Ouça no YouTube sempre que quiser sentir o meu abraço.
+                    </p>
+                    <a href="https://www.youtube.com/results?search_query=Lisboa+musica+romantica" target="_blank" rel="noopener noreferrer" 
+                       class="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-3 rounded-full shadow-lg transition text-sm">
+                        <i data-lucide="youtube" class="w-5 h-5"></i>
+                        Ouvir Lisboa no YouTube
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CARTA PRINCIPAL PARA HIGOR -->
+    <section id="carta" class="py-16 px-4 max-w-4xl mx-auto">
+        <div class="text-center mb-10">
+            <span class="text-blue-400 text-sm tracking-widest uppercase font-semibold">Mensagem do Coração</span>
+            <h2 class="font-serif-romantic text-3xl sm:text-5xl font-bold text-white mt-2">Carta para o Meu Higor</h2>
+            <div class="w-24 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mt-4"></div>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 sm:p-12 shadow-2xl border border-blue-400/20">
+            <div class="prose prose-invert max-w-none text-blue-100/90 text-base sm:text-lg leading-relaxed font-light space-y-6">
+                <p class="font-handwriting text-2xl sm:text-3xl text-blue-300 font-semibold mb-6">
+                    pro meu Higor, meu neném. 🤍
+                </p>
+
+                <p>Amor, eu queria q vc pudesse enxergar por alguns minutos oq se passa na minha cabeça quando penso em vc, pq talvez assim vc entendesse o quanto é amado por mim.</p>
+
+                <p>Às vezes eu fico pensando em como minha vida seria diferente se naquele dia a gente não tivesse se conhecido. É engraçado pensar q tudo começou de uma maneira tão simples e q, sem eu perceber, vc acabou se tornando uma das pessoas mais importantes da minha vida. Quem diria q aquela partida de free fire ia me trazer alguém q eu amaria tanto?</p>
+
+                <p>Higor, eu sei q a gente não teve uma história perfeita e muito menos um caminho fácil, mas eu não trocaria as lembranças q tenho com vc. Até mesmo as dificuldades fizeram parte de quem somos hoje. A gente já precisou aprender muita coisa, entender os sentimentos um do outro e reconhecer nossos erros. E eu espero q a gente nunca perca essa vontade de fazer dar certo.</p>
+
+                <p>Eu queria q vc soubesse q eu não preciso de grandes coisas pra ser feliz com vc. Eu gosto das pequenas coisas, de conversar com vc, de saber como foi seu dia, de receber uma mensagem sua, de ouvir suas besteiras e de poder compartilhar até as coisas mais insignificantes da minha rotina. São essas coisinhas q fazem eu perceber o quanto gosto de ter vc comigo.</p>
+
+                <p>E, neném, eu espero q vc nunca pense q precisa ser alguém diferente pra merecer meu amor. Eu não espero q vc seja perfeito, não espero q tenha todas as respostas e nem q saiba resolver tudo. Eu só quero q seja sincero comigo, q confie em mim e q nunca tenha medo de conversar sobre oq sente.</p>
+
+                <p>Eu também tenho minhas dificuldades, tenho meus medos e às vezes sou uma pessoa complicada de entender. Tem dias em q penso demais, fico insegura e acabo deixando meus próprios pensamentos me machucarem. Mas eu quero q vc saiba q estou tentando melhorar, não só por nós, mas por mim também. Não quero q minhas inseguranças sejam maiores do q os momentos felizes q podemos viver.</p>
+
+                <p>Sabe uma coisa q eu desejo muito? Poder acompanhar vc crescendo, realizando seus sonhos e conquistando tudo aquilo q deseja. Quero estar aqui pra comemorar suas vitórias, te apoiar quando alguma coisa der errado e te lembrar do quanto vc é capaz quando nem vc mesmo acreditar nisso.</p>
+
+                <p>Eu quero ser aquela pessoa q vc procura quando tem uma notícia boa, quando está triste, quando quer contar alguma besteira ou simplesmente quando não tem nada pra fazer. Quero q vc se sinta confortável comigo, q nunca precise esconder oq sente e q saiba q pode contar comigo.</p>
+
+                <p>Eu não sei quantas coisas ainda vamos viver, quantas histórias vamos ter pra contar ou quantas vezes vamos rir juntos até a barriga doer, mas eu espero q sejam muitas. Quero conhecer cada versão sua, quero descobrir novos gostos, criar novas lembranças e continuar encontrando motivos pra me apaixonar por vc.</p>
+
+                <p>E se algum dia as coisas ficarem difíceis, espero q a gente se lembre de conversar antes de desistir, de ouvir antes de julgar e de cuidar antes de machucar. Pq eu quero um amor em q os dois se esforcem, em q os dois tenham vontade e em q nenhum precise implorar pelo carinho do outro.</p>
+
+                <p>Eu te amo, meu amor. E não é só pelo oq vc faz por mim, mas por quem vc é, pelas suas particularidades, pelo seu jeitinho e por tudo aquilo q faz vc ser vc.</p>
+
+                <p>Obrigada por existir na minha vida e por fazer parte da minha história. Espero q vc nunca duvide do quanto é especial pra mim.</p>
+
+                <p class="font-medium text-blue-200">Eu escolheria conhecer vc naquela madrugada outras mil vezes, só pra ter a oportunidade de viver tudo isso novamente.</p>
+
+                <p>Eu te amo, meu neném. Minha vidinha, meu nescauzinho e meu amor. Que a nossa história ainda tenha muitos capítulos lindos pela frente.</p>
+
+                <div class="pt-6 border-t border-blue-500/20 text-right">
+                    <p class="font-handwriting text-3xl text-blue-300">
+                        Com todo o amor do mundo,<br>da sua menina. 🤍
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12 CARTAS INTERATIVAS "ABRA QUANDO..." -->
+    <section id="abra-quando" class="py-16 px-4 max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <span class="text-blue-400 text-sm tracking-widest uppercase font-semibold">Momentos Especiais</span>
+            <h2 class="font-serif-romantic text-3xl sm:text-5xl font-bold text-white mt-2">12 Cartas: Abra Quando...</h2>
+            <p class="text-blue-200/70 text-sm sm:text-base mt-2">Clique para ler as mensagens guardadas para cada momento.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="cardsGrid"></div>
+    </section>
+
+    <!-- SEÇÃO EXCLUSIVA E RICA DE JOGOS DO CASAL -->
+    <section id="jogos" class="py-16 px-4 max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <span class="text-blue-400 text-sm tracking-widest uppercase font-semibold">Espaço Interativo</span>
+            <h2 class="font-serif-romantic text-3xl sm:text-5xl font-bold text-white mt-2">Jogos do Casal 🎮🤍</h2>
+            <p class="text-blue-200/70 text-sm sm:text-base mt-2">Mini games criados especialmente para o Marya & Higor!</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+            <!-- JOGO 1: QUIZ DO NOSSO AMOR -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-blue-500/20 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-blue-600/30 rounded-2xl text-blue-300">
+                            <i data-lucide="help-circle" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold font-serif-romantic text-white">1. Quiz da Nossa História</h3>
+                            <span class="text-xs text-blue-300">Teste seus conhecimentos!</span>
+                        </div>
+                    </div>
+                    <div id="quizContainer" class="min-h-[220px] flex flex-col justify-center"></div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-blue-800/40 text-center">
+                    <span id="quizScore" class="text-xs text-blue-300 font-medium"></span>
+                </div>
+            </div>
+
+            <!-- JOGO 2: JOGO DA MEMÓRIA DO CASAL -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-blue-500/20 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-indigo-600/30 rounded-2xl text-indigo-300">
+                                <i data-lucide="brain" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold font-serif-romantic text-white">2. Jogo da Memória</h3>
+                                <span class="text-xs text-blue-300">Encontre os pares românticos</span>
+                            </div>
+                        </div>
+                        <button onclick="initMemoryGame()" class="text-xs bg-blue-600/40 hover:bg-blue-600 text-blue-200 px-3 py-1.5 rounded-lg border border-blue-400/30 transition">
+                            Reiniciar
+                        </button>
+                    </div>
+                    <div id="memoryBoard" class="grid grid-cols-4 gap-3 my-4"></div>
+                </div>
+                <div class="mt-2 text-center">
+                    <span id="memoryStatus" class="text-xs text-blue-300 font-medium">Pares encontrados: 0 / 6</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- JOGO 3: ROLETA DE ENCONTROS & DESAFIOS -->
+            <div class="glass-card rounded-3xl p-6 border border-blue-500/20 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-indigo-600/30 rounded-2xl text-indigo-300">
+                            <i data-lucide="dices" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-serif-romantic text-white">3. Roleta de Encontros</h3>
+                    </div>
+                    <p class="text-xs text-blue-200/80 mb-4">Sem ideia do que fazer? Sorteie um vale-desafio ou encontro!</p>
+
+                    <div class="bg-slate-900/70 rounded-2xl p-6 border border-blue-500/20 text-center min-h-[140px] flex flex-col items-center justify-center mb-4">
+                        <i id="rouletteIcon" data-lucide="sparkles" class="w-8 h-8 text-blue-400 mb-2"></i>
+                        <p id="rouletteResult" class="text-sm font-semibold text-white">Clique para sortear seu prêmio!</p>
+                    </div>
+                </div>
+                <button onclick="spinRoulette()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium py-3 rounded-2xl transition shadow-lg flex items-center justify-center gap-2">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Sortear Agora
+                </button>
+            </div>
+
+            <!-- JOGO 4: CAÇA AOS CORAÇÕES (ARCADE MINI-GAME) -->
+            <div class="glass-card rounded-3xl p-6 border border-blue-500/20 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-blue-600/30 rounded-2xl text-blue-300">
+                            <i data-lucide="gamepad" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-serif-romantic text-white">4. Pegar Estrelas & Corações</h3>
+                    </div>
+                    <p class="text-xs text-blue-200/80 mb-4">Clique nos itens caindo para acumular pontos de amor!</p>
+
+                    <div id="arcadeArea" class="relative bg-slate-950/80 rounded-2xl h-[140px] border border-blue-500/20 overflow-hidden flex items-center justify-center mb-4">
+                        <span id="arcadeStartMsg" class="text-xs text-blue-300">Clique em "Iniciar Jogo"!</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="arcadeBtn" onclick="startArcadeGame()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-2xl transition shadow-lg text-sm">
+                        Iniciar Jogo 🎯
+                    </button>
+                </div>
+            </div>
+
+            <!-- JOGO 5: CAIXINHA DOS MOTIVOS -->
+            <div class="glass-card rounded-3xl p-6 border border-blue-500/20 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-blue-500/30 rounded-2xl text-blue-200">
+                            <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-serif-romantic text-white">5. Pote dos Motivos</h3>
+                    </div>
+                    <p class="text-xs text-blue-200/80 mb-4">Puxe uma fichinha para ler por que amo você!</p>
+
+                    <div class="bg-slate-900/70 rounded-2xl p-6 border border-blue-500/20 text-center min-h-[140px] flex items-center justify-center mb-4">
+                        <p id="reasonText" class="text-xs sm:text-sm italic text-blue-100">"Clique para tirar um motivo do pote..."</p>
+                    </div>
+                </div>
+                <button onclick="getRandomReason()" class="w-full bg-blue-700/50 hover:bg-blue-600/60 border border-blue-400/30 text-white font-medium py-3 rounded-2xl transition shadow-lg flex items-center justify-center gap-2">
+                    <i data-lucide="heart" class="w-4 h-4 text-blue-300"></i> Tirar Motivo 🤍
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ÁLBUM DE FOTOS -->
+    <section id="fotos" class="py-16 px-4 max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <span class="text-blue-400 text-sm tracking-widest uppercase font-semibold">Nossa Galeria</span>
+            <h2 class="font-serif-romantic text-3xl sm:text-5xl font-bold text-white mt-2">Álbum de Fotos & Lembranças 📸</h2>
+            <p class="text-blue-200/70 text-sm sm:text-base mt-2">Nossos momentos gravados para sempre!</p>
+        </div>
+
+        <div class="flex justify-center mb-10">
+            <label class="cursor-pointer glass-card hover:bg-blue-900/50 text-blue-200 px-6 py-3 rounded-full border border-blue-400/30 text-sm font-medium transition flex items-center gap-2 shadow-lg">
+                <i data-lucide="image-plus" class="w-4 h-4 text-blue-400"></i> Adicionar Foto ao Mural
+                <input type="file" accept="image/*" class="hidden" onchange="addNewPhoto(event)">
+            </label>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="photoGallery">
+            <div class="polaroid bg-white p-4 rounded-xl shadow-2xl rotate-[-2deg]">
+                <div class="w-full h-64 bg-slate-200 rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=600&q=80" alt="Momentos" class="w-full h-full object-cover">
+                </div>
+                <p class="font-handwriting text-slate-800 text-center text-xl mt-3">Onde tudo começou... 🤍</p>
+            </div>
+            <div class="polaroid bg-white p-4 rounded-xl shadow-2xl rotate-[3deg]">
+                <div class="w-full h-64 bg-slate-200 rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=600&q=80" alt="Madrugadas" class="w-full h-full object-cover">
+                </div>
+                <p class="font-handwriting text-slate-800 text-center text-xl mt-3">Nossos jogos na madrugada 🎮</p>
+            </div>
+            <div class="polaroid bg-white p-4 rounded-xl shadow-2xl rotate-[-3deg]">
+                <div class="w-full h-64 bg-slate-200 rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=80" alt="Risadas" class="w-full h-full object-cover">
+                </div>
+                <p class="font-handwriting text-slate-800 text-center text-xl mt-3">Rindo até a barriga doer 🥰</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-blue-900/50 text-center text-blue-300/60 text-sm">
+        <p class="font-handwriting text-2xl text-blue-200 mb-2">Te amo para sempre, meu Higor! 🤍</p>
+        <p>© Marya & Higor • Feito com todo o carinho do mundo.</p>
+    </footer>
+
+    <!-- MODAL DAS CARTAS ABRA QUANDO -->
+    <div id="cardModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card max-w-lg w-full rounded-3xl p-6 sm:p-8 border border-blue-400/30 relative shadow-2xl" id="modalContent">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-blue-300 hover:text-white bg-blue-900/40 p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="p-3 bg-blue-600/30 rounded-2xl text-blue-300" id="modalIcon"></div>
+                <div>
+                    <span class="text-xs text-blue-400 font-semibold tracking-wider uppercase">Abra Quando...</span>
+                    <h3 id="modalTitle" class="text-xl font-bold font-serif-romantic text-white"></h3>
+                </div>
+            </div>
+            <div class="border-t border-blue-800/40 pt-4 mt-2">
+                <p id="modalBody" class="text-blue-100 leading-relaxed text-sm sm:text-base font-light space-y-4"></p>
+            </div>
+            <div class="mt-8 text-center">
+                <button onclick="closeModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium px-6 py-2.5 rounded-full text-sm">
+                    Guardar no Coração 🤍
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE TODOS OS JOGOS E INTERAÇÕES -->
+    <script>
+        lucide.createIcons();
+
+        // CARTAS ABRA QUANDO
+        const cardsData = [
+            { id: 1, title: "Estiver com saudades de mim", icon: "heart-handshake", content: "Neném, quando a saudade apertar, lembra que meu coração tá sempre pertinho do seu. Fecha os olhos e imagina meu abraço bem apertado. Eu posso não estar do seu lado fisicamente agora, mas meu pensamento nunca sai de você!" },
+            { id: 2, title: "Tiver um dia difícil / cansativo", icon: "frown", content: "Meu amor, não carrega o peso do mundo sozinho. Respira fundo. Eu tô aqui pro der e vier. Se quiser desabafar, fala comigo. Se quiser silêncio, fico em silêncio com você. Seu dia ruim vai passar!" },
+            { id: 3, title: "Duvidar do meu amor por você", icon: "heart", content: "Eu te escolheria naquela madrugada mil vezes! Meu amor por você não depende de dias perfeitos. Eu te amo pelo seu jeito, pelas conversas e por quem você é comigo. Você é extremamente especial pra mim!" },
+            { id: 4, title: "Não conseguir dormir de noite", icon: "moon", content: "Nossas madrugadas sempre foram mágicas! Pensa na gente conversando bobeira, ouvindo 'Lisboa' bem baixinho e planejando nosso futuro juntos. Dorme bem, meu nescauzinho. 🤍" },
+            { id: 5, title: "Quiser relembrar nosso início no Free Fire", icon: "gamepad-2", content: "Quem diria que uma simples partida de Free Fire iria me dar o amor da minha vida? Aquele dia simples foi o começo da melhor história da minha vida!" },
+            { id: 6, title: "Estiver triste ou desanimado", icon: "smile", content: "Tô te mandando um abraço quentinho através dessa mensagem. Lembre-se do quanto você é forte, incrível e do quanto eu tenho orgulho do homem que você é!" },
+            { id: 7, title: "Quiser rir um pouco", icon: "laugh", content: "Lembra das besteiras que a gente fala e das risadas até a barriga doer? Nada no mundo paga ver você sorrindo!" },
+            { id: 8, title: "A gente tiver uma briguinha", icon: "shield-alert", content: "Nós dois somos um time contra o problema, e nunca você contra mim! Nosso amor e nossa história são gigantescos. Vamos conversar com carinho e resolver juntinhos." },
+            { id: 9, title: "Alcançar uma conquista grande", icon: "trophy", content: "PARABÉNS MEU AMOR! Eu sabia que você ia conseguir! Tô aqui da primeira fileira vibrando com cada vitória sua!" },
+            { id: 10, title: "Estiver se sentindo inseguro", icon: "user-check", content: "Você não precisa ser perfeito pra merecer meu amor. Eu te amo com todas as suas particularidades e do jeitinho exatamente como você é." },
+            { id: 11, title: "Precisar de um abraço apertado", icon: "armchair", content: "Sinta meus braços em volta de você agora mesmo. Imagina aquele abraço bem demorado em que o tempo para." },
+            { id: 12, title: "Quiser saber o quanto é especial", icon: "sparkles", content: "Você é minha pessoa favorita no universo inteiro! Obrigada por existir na minha vida e por ser meu parceiro de vida." }
+        ];
+
+        const cardsGrid = document.getElementById('cardsGrid');
+        cardsData.forEach(card => {
+            const cardEl = document.createElement('div');
+            cardEl.className = 'glass-card glass-card-hover rounded-2xl p-6 cursor-pointer transition border border-blue-500/20 flex flex-col justify-between';
+            cardEl.onclick = () => openModal(card);
+            cardEl.innerHTML = `
+                <div>
+                    <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-400/30 text-blue-300 flex items-center justify-center mb-3">
+                        <i data-lucide="${card.icon}" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xs text-blue-400 font-semibold tracking-wider uppercase">Abra Quando...</span>
+                    <h3 class="text-base font-bold text-white mt-1 mb-2">${card.title}</h3>
+                </div>
+                <div class="mt-3 pt-2 border-t border-blue-800/40 flex items-center justify-between text-xs text-blue-300">
+                    <span>Ler mensagem</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </div>
+            `;
+            cardsGrid.appendChild(cardEl);
+        });
+
+        function openModal(card) {
+            document.getElementById('modalTitle').innerText = card.title;
+            document.getElementById('modalBody').innerText = card.content;
+            document.getElementById('modalIcon').innerHTML = `<i data-lucide="${card.icon}" class="w-6 h-6"></i>`;
+            lucide.createIcons();
+            document.getElementById('cardModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('cardModal').classList.add('hidden');
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        // --- JOGO 1: QUIZ ---
+        const quizData = [
+            { question: "Onde começou a história do Marya e do Higor?", options: ["No Instagram", "Em uma partida de Free Fire 🎮", "Na escola", "Em uma festa"], correct: 1 },
+            { question: "Qual o momento do dia que marcou nossas primeiras conversas?", options: ["Pela manhã", "À tarde", "Nas madrugadas 🌌", "No almoço"], correct: 2 },
+            { question: "Qual é o apelido carinhoso mais doce do Higor?", options: ["Nescauzinho / Neném 🤍", "Chuchu", "Duduzinho", "Príncipe"], correct: 0 },
+            { question: "Qual é a música tema do casal?", options: ["Lisboa 🎵", "Evidências", "Melim - Meu Abrigo", "Deus me Proteja"], correct: 0 }
+        ];
+
+        let currentQuizIndex = 0, quizScore = 0;
+        function loadQuizQuestion() {
+            const container = document.getElementById('quizContainer');
+            if (currentQuizIndex >= quizData.length) {
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i data-lucide="trophy" class="w-12 h-12 text-yellow-400 mx-auto mb-2 animate-bounce"></i>
+                        <p class="text-lg font-bold text-white">Você acertou ${quizScore} de ${quizData.length}!</p>
+                        <p class="text-xs text-blue-200 mt-1">Você conhece o nosso amor perfeitamente! 🥰</p>
+                        <button onclick="resetQuiz()" class="mt-4 bg-blue-600 text-white text-xs px-4 py-2 rounded-full">Jogar Novamente</button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+            const q = quizData[currentQuizIndex];
+            let optionsHTML = q.options.map((opt, idx) => `
+                <button onclick="selectAnswer(${idx})" class="w-full text-left bg-slate-900/60 hover:bg-blue-800/40 border border-blue-500/20 p-2.5 rounded-xl text-xs text-blue-100 transition mb-2">
+                    ${opt}
+                </button>
+            `).join('');
+            container.innerHTML = `<p class="text-xs sm:text-sm font-semibold text-white mb-3">${currentQuizIndex + 1}. ${q.question}</p><div class="space-y-1">${optionsHTML}</div>`;
+            document.getElementById('quizScore').innerText = `Pergunta ${currentQuizIndex + 1} de ${quizData.length}`;
+        }
+        function selectAnswer(index) {
+            if (index === quizData[currentQuizIndex].correct) quizScore++;
+            currentQuizIndex++;
+            loadQuizQuestion();
+        }
+        function resetQuiz() { currentQuizIndex = 0; quizScore = 0; loadQuizQuestion(); }
+        loadQuizQuestion();
+
+        // --- JOGO 2: JOGO DA MEMÓRIA ---
+        const memoryIcons = ['heart', 'gamepad-2', 'music', 'moon', 'sparkles', 'coffee'];
+        let memoryCards = [], firstCard = null, secondCard = null, lockBoard = false, pairsFound = 0;
+
+        function initMemoryGame() {
+            const board = document.getElementById('memoryBoard');
+            board.innerHTML = '';
+            pairsFound = 0;
+            document.getElementById('memoryStatus').innerText = "Pares encontrados: 0 / 6";
+            memoryCards = [...memoryIcons, ...memoryIcons].sort(() => 0.5 - Math.random());
+
+            memoryCards.forEach((icon, idx) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card h-16 bg-slate-900/80 rounded-xl cursor-pointer border border-blue-500/30';
+                card.dataset.icon = icon;
+                card.innerHTML = `
+                    <div class="memory-card-inner w-full h-full relative rounded-xl">
+                        <div class="memory-card-front absolute w-full h-full bg-slate-900 rounded-xl flex items-center justify-center text-blue-400">
+                            <i data-lucide="heart" class="w-5 h-5 opacity-40"></i>
+                        </div>
+                        <div class="memory-card-back absolute w-full h-full bg-blue-600 rounded-xl flex items-center justify-center text-white">
+                            <i data-lucide="${icon}" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => flipMemoryCard(card);
+                board.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function flipMemoryCard(card) {
+            if (lockBoard || card === firstCard || card.classList.contains('flipped')) return;
+            card.classList.add('flipped');
+            if (!firstCard) { firstCard = card; return; }
+            secondCard = card;
+            checkMemoryMatch();
+        }
+
+        function checkMemoryMatch() {
+            let isMatch = firstCard.dataset.icon === secondCard.dataset.icon;
+            if (isMatch) {
+                pairsFound++;
+                document.getElementById('memoryStatus').innerText = `Pares encontrados: ${pairsFound} / 6`;
+                resetMemoryCards();
+                if (pairsFound === 6) {
+                    confetti({ particleCount: 70, spread: 50 });
+                    document.getElementById('memoryStatus').innerText = "Parabéns, meu amor! Você venceu! 🎉🤍";
+                }
+            } else {
+                lockBoard = true;
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    resetMemoryCards();
+                }, 1000);
+            }
+        }
+        function resetMemoryCards() { [firstCard, secondCard, lockBoard] = [null, null, false]; }
+        initMemoryGame();
+
+        // --- JOGO 3: ROLETA ---
+        const activities = [
+            { text: "Vale um cafuné de 30 minutos 💆‍♂️", icon: "heart" },
+            { text: "Uma noite de japa ou pizza juntos 🍕", icon: "utensils" },
+            { text: "Sessão de filme deitadinhos 🍿", icon: "tv" },
+            { text: "Uma partida de jogo juntinhos 🎮", icon: "gamepad-2" },
+            { text: "Um pedido especial do Higor! ✨", icon: "gift" }
+        ];
+
+        function spinRoulette() {
+            const resultElem = document.getElementById('rouletteResult');
+            let counter = 0;
+            const interval = setInterval(() => {
+                const random = activities[Math.floor(Math.random() * activities.length)];
+                resultElem.innerText = random.text;
+                counter++;
+                if (counter > 12) {
+                    clearInterval(interval);
+                    confetti({ particleCount: 40 });
+                }
+            }, 80);
+        }
+
+        // --- JOGO 4: ARCADE PEGAR CORAÇÕES ---
+        let arcadeScore = 0, arcadeInterval = null;
+        function startArcadeGame() {
+            const area = document.getElementById('arcadeArea');
+            area.innerHTML = '';
+            arcadeScore = 0;
+            clearInterval(arcadeInterval);
+
+            const scoreDisplay = document.createElement('div');
+            scoreDisplay.className = 'absolute top-2 left-2 text-xs font-bold text-blue-300 z-10';
+            scoreDisplay.id = 'arcadeScoreText';
+            scoreDisplay.innerText = 'Pontos de Amor: 0';
+            area.appendChild(scoreDisplay);
+
+            arcadeInterval = setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'absolute cursor-pointer text-blue-400 hover:scale-125 transition transform';
+                heart.style.left = Math.random() * 80 + 10 + '%';
+                heart.style.top = Math.random() * 60 + 20 + '%';
+                heart.innerHTML = `<i data-lucide="heart" class="w-6 h-6 fill-current"></i>`;
+                heart.onclick = () => {
+                    arcadeScore += 10;
+                    document.getElementById('arcadeScoreText').innerText = `Pontos de Amor: ${arcadeScore}`;
+                    heart.remove();
+                    if (arcadeScore >= 100) {
+                        clearInterval(arcadeInterval);
+                        confetti({ particleCount: 60 });
+                        area.innerHTML = `<div class="text-center"><p class="text-sm font-bold text-white">Você conseguiu 100 Pontos! 🤍</p><p class="text-xs text-blue-300">Meu amor por você é infinito!</p></div>`;
+                    }
+                };
+                area.appendChild(heart);
+                lucide.createIcons();
+                setTimeout(() => heart.remove(), 2000);
+            }, 800);
+        }
+
+        // --- JOGO 5: POTE DOS MOTIVOS ---
+        const reasons = [
+            "Porque você me faz rir mesmo nos dias difíceis.",
+            "Pelas nossas conversas da madrugada que eu não troco por nada.",
+            "Porque tudo começou num simples Free Fire e virou meu maior amor.",
+            "Pelo seu jeitinho único que me apaixona todos os dias.",
+            "Porque você me apoia e acredita em mim.",
+            "Porque você é meu neném e meu nescauzinho favorito.",
+            "Porque eu escolheria te conhecer de novo mil vezes!"
+        ];
+        function getRandomReason() {
+            document.getElementById('reasonText').innerText = `"${reasons[Math.floor(Math.random() * reasons.length)]}"`;
+        }
+
+        // FOTOS
+        function addNewPhoto(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const gallery = document.getElementById('photoGallery');
+                    const newP = document.createElement('div');
+                    newP.className = 'polaroid bg-white p-4 rounded-xl shadow-2xl rotate-[2deg]';
+                    newP.innerHTML = `<div class="w-full h-64 bg-slate-200 rounded-lg overflow-hidden"><img src="${evt.target.result}" class="w-full h-full object-cover"></div><p class="font-handwriting text-slate-800 text-center text-xl mt-3">Momento Especial 🤍</p>`;
+                    gallery.prepend(newP);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>
+```
+
+### O que foi implementado de especial:
+1. **5 Jogos do Casal Interativos**:
+   - **Quiz da História**: Perguntas sobre o Free Fire, apelidos ("nescauzinho"), conversas de madrugada com nota final e confete.
+   - **Jogo da Memória Romântico**: 6 pares com cartas em visual 3D e ícones românticos.
+   - **Roleta de Encontros**: Sorteia convites e mimos (japa/pizza, cafuné, filme juntos, etc).
+   - **Mini Arcade "Pegar Corações"**: Jogo em JS onde corações flutuantes precisam ser clicados para acumular 100 pontos de amor.
+   - **Pote dos Motivos**: Gerador de declarações fofas instantâneas.
+2. **Carta Principal Completa na Íntegra**: Texto completo da declaração de amor da Marya para o Higor.
+3. **12 Cartas "Abra Quando..."**: Todas as 12 situações com caixas de diálogo (*popups*) interativas.
+4. **Música "Lisboa"**: Player fixo e seção dedicada com link direto para o YouTube.
+5. **Mural de Fotos Polaroid**: Com suporte a upload de fotos diretamente no navegador.
